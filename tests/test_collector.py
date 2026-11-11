@@ -44,7 +44,7 @@ def test_full_export_preserves_unknown_fields(tmp_path):
     first["list"][0]["futureField"] = {"nested": ["原样保留", 0]}
     raw = collector(Source({1: first, 2: page(2)})).collect(tenant=TENANT, out=tmp_path)
     records = [json.loads(line) for line in raw.read_text(encoding="utf-8").splitlines()]
-    state = json.loads((tmp_path / "manifest.json").read_text())
+    state = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
     assert len(records) == state["spu_collected"] == 101
     assert records[0]["futureField"] == {"nested": ["原样保留", 0]}
     assert state["status"] == "complete"
@@ -56,7 +56,7 @@ def test_resume_after_failed_page(tmp_path):
     source = Source({1: page(1), 2: ExportError("disconnected")})
     with pytest.raises(ExportError, match="disconnected"):
         collector(source).collect(tenant=TENANT, out=tmp_path)
-    state = json.loads((tmp_path / "manifest.json").read_text())
+    state = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
     assert state["status"] == "incomplete" and set(state["pages"]) == {"1"}
     assert not (tmp_path / "spus.jsonl").exists()
     resumed = Source({1: page(1), 2: page(2)})
@@ -90,7 +90,7 @@ def test_later_page_mixed_tenant_not_checkpointed(tmp_path):
     second["list"][0]["tenantId"] = "other-demo-tenant"
     with pytest.raises(ExportError, match="租户"):
         collector(Source({1: page(1), 2: second})).collect(tenant=TENANT, out=tmp_path)
-    state = json.loads((tmp_path / "manifest.json").read_text())
+    state = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
     assert set(state["pages"]) == {"1"}
     assert not (tmp_path / ".pages/000002.json").exists()
 

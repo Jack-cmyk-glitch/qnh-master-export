@@ -133,9 +133,9 @@ def test_cli_pipeline_through_http_bridge(daemon, tmp_path, empty):
     assert len(calls) == 3
     assert (out / "master.xlsx").exists() is not empty
     if not empty:
-        manifest = json.loads((out / "manifest.json").read_text())
+        manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
         assert manifest["status"] == "complete" and manifest["spu_collected"] == 1
-        assert json.loads((out / "spus.jsonl").read_text())["spuId"] == "demo-spu"
+        assert json.loads((out / "spus.jsonl").read_text(encoding="utf-8"))["spuId"] == "demo-spu"
 
 
 @pytest.mark.parametrize(

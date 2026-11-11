@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qnh-master-export"
-version = "0.1.0"
+version = "0.1.1"
 description = "Export QianNiuHua product masters through an authenticated OpenCLI browser session."
 readme = "README.md"
 license = "MIT"
